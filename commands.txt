@@ -1,0 +1,290 @@
+	=============================================================
+	====================== CISCO COMMANDS =======================
+	===================== 07/10/2015 07:00 ======================
+	=================== Brecht Van Eeckhoudt ====================
+	=============================================================
+
+		IP INSTELLEN OP PC!!!!
+		DEFAULT GATEWAY: Dichtbijzijnde router (ook voor switch)
+
+		Speed(baud):	9600
+		Data bits:		8
+		Stop bit:		1
+		Parity:			None
+		Flow control:	None
+
+
+	-- ROUTER RESETTEN: --
+	Router> enable (= en)
+	Router# erase startup-config
+	Router# reload
+
+
+	-- ROUTER INSTELLEN: --
+	Router> enable
+	Router# configure terminal (=conf t)
+	Router(config)# hostname R1 (NO hostname (of ip address) om ongedaan te maken!!!!)
+	R1(config)# no ip domain-lookup (opzoeken DNS uitschakelen) (voorkomt lange wachttijden bij tikfouten)
+	R1(config)# interface fastEthernet0/0 (=F0/0) (of "loopback 0") (gigabit g, serial s)
+	R1(config-if)# ip address 192.168.0.1 255.255.255.0
+	R1(config-if)# description link to lan-10
+	R1(config-if)# no shutdown
+	R1(config-if)# exit
+	R1(config)# interface fastEthernet0/1 (=F0/1)
+	R1(config-if)# (ga verder met zelfde als hierboven)
+
+
+	-- SWITCH RESETTEN: --
+	Switch> enable
+	Switch# erase startup-config
+	Switch# delete flash:vlan.dat (= delete vlan.dat if the location hasn't changed)
+	Switch# reload
+
+
+	-- SWITCH INSTELLEN: --
+	Switch> enable
+	Switch# config t
+	Switch(config)# hostname S1
+	S1(config)# no ip domain-lookup
+	S1(config)# interface vlan1
+	S1(config-if)# ip address 192.168.1.4 255.255.255.0
+	S1(config-if)# no shutdown
+	S1(config-if)# ip default-gateway 192.168.1.1 (voor remote management)
+
+
+	-- BEVEILIGEN: --
+	R1> enable
+	R1# config t
+	R1(Config)# enable secret class (PRIVILLEGED MODE passwoord = class)
+	R1(Config)# line console 0 (= line con 0) (password CONSOLE instellen)
+	R1(Config-line)# password cisco
+	R1(Config-line)# login ("er moet ingelogd worden")
+	R1(Config-line)# loggin synchronous (prevent console messages from interrupting cmd's)
+	R1(Config-line)# exit
+	R1(Config)# line vty 0 4 (5 connecties tegelijkertijd (switch: 0 -> 15 (hoe zien: sh run, spatie, helemaal van onder)) TELNET passwoord = cisco)
+	R1(Config-line)# password cisco
+	R1(Config-line)# login
+	R1(Config-line)# loggin synchronous
+	R1(Config-line)# exit
+	R1(Config)# service password-encryption (prevent password from displaying)
+
+
+	-- SSH INSTELLEN: --
+	R1(Config)# ip domain-name ikdoeict.be
+	R1(Config)# crypto key generate RSA general-keys modulus 1024
+	R1(Config)# line vty 0 4 (switch: 0 -> 15 ????)
+	R1(Config-line)# transport input ssh telnet (welke toelaten?)
+	R1(Config-line)# login local (lokale database)
+	R1(Config-line)# username admin privilege 15 secret adminpass
+	R1(Config-line)# exit
+	R1(Config)# ip ssh version 2
+	R1(Config)# ip ssh time-out 75
+	R1(Config)# ip ssh authentication-retries 2
+
+	R1(Config)# crypto key zerioze rsa (delete RSA key pair)
+
+
+
+	-- VERDER BEVEILIGEN: --
+	R1(Config)# line console 0
+	R1(Config-line)# exec-timeout 10 (automatisch afsluiten na 10 min)
+	R1(Config-line)# exit
+	R1(Config)# line vty 0 4 (switch: 0 -> 15)
+	R1(Config-line)# exec-timeout 10
+	R1(Config-line)# exit
+	R1(Config)# login block-for 120 attempts 3 within 60 (120 seconden, 2 within 2 = 2 verkeerde pogingen)
+	R1(Config)# security password min-length 8
+
+
+	-- IPV6 INSTELLEN: --
+	R1(Config)# interface f/0/0
+	R1(Config-if)# ipv6 address 2001:db8:acad:1::1/64 (zo nodig link-local, dan zonder /64)
+	R1(Config-if)# no shutdown
+	R1(Config-if)# exit
+	R1(Config)# ipv6 unicast-routing
+
+
+	-- BANNER MOTD INSTELLEN: --
+	R1(Config)# banner motd %stuffgoeshere% (% = delimiter)
+
+
+	-- OPSLAAN: --
+	R1# copy running-config startup-config (= copy run start)
+	R1# copy running-config tftp (backup & restore using TFTP)
+	R1# copy running-config usbflash0:/ (save to usb drive)
+
+	R1# copy running-config flash:backup.txt
+	R1# copy flash:backup.txt running-config
+
+
+
+	-- DEBUGGING EN ANDERE: --
+	"?" BEHIND COMMAND !!! 	-> show ?
+							-> v?
+							-> ?
+	show 	ip(v6) interface brief (= sh ip int br)
+			
+			version
+			ip(v6) route
+			ip ssh
+			ip <id>
+			cdp neighbors (+details)
+
+			protocols
+			file systems
+			startup/running-config (= sh run) (enter to switch pages)
+			flash
+			bootvar (= boot) (show current IOS boot file)
+		
+			port security (+interface interface_id, +address)
+			controllers
+			
+			ntp associations
+			ntp status
+			ntp master
+			ip http server status (no ip http server)
+
+			vlan (+brief, +summary, +id vlan_id)
+			interfaces (+switchport)
+			vlan name <name> (beter: vlan brief)
+			interfaces vlan vlan_id (niet veel gebruikt)
+			interface f0/18 (+switchport: administrative & operational status)
+			dtp interface f0/1 (current dtp mode)
+			interfaces (f0/1) trunk
+
+	do show vlan brief
+
+	R1# traceroute ipaddress (= tracert)
+	R1# boot system (set boot environment variable)
+
+
+	
+	-- MAC TABLE STUFF: --
+	S1# show ip arp (= arp)
+	S1# show mac-address-table (+dynamic, +addresses...)
+	S1# show mac-address-table interface f0/0
+	S1# (no) mac address-table static 0050.56BE.6C88 vlan 99 interface f0/6
+
+	S1(Config)# switchport port-security mac-address (sticky) <mac address>
+	S1(Config)# no shutdown
+
+
+
+	-- VLAN INSTELLEN EN AAN INTERFACE LINKEN: --
+	S1(config)# vlan vlan_id (102, 103, 105 - 107) (no vlan 20: no longer ports assigned, if yes: can't communicate anymore)
+	S1(config-vlan)# name vlan_name
+	S1(config-vlan)# exit
+	S1(config)# interface interface_id 
+	S1(config)# switchport mode access (permanent access mode)
+	S1(config-if)# switchport access vlan vlan_id (no switchport access vlan)
+
+
+	-- TRUNK LINK INSTELLEN: --
+	S1# conf t
+	S1(Config)# interface f0/1
+	S1(Config-if)# switchport mode trunk (permanent trunking mode) (samen met "switchport nonegotiate": no DTP frames)
+	S1(Config-if)# switchport trunk native vlan 99 (set native vlan, do this on both ends!) (no switchport trunk native vlan)
+	S1(Config-if)# switchport trunk allowed vlan 10, 20, 30, 99 (no switchport trunk allowed vlan)
+	S1(Config-if)# (no) switchport protected (Private VLAN Edge, protected ports)
+	S1(Config-if)# end
+
+
+	-- VLAN VERDER INSTELLEN: --
+	S1> enable
+	S1# configure terminal
+	S1(config)# interface vlan 99
+	S1(config-if)# ip address 172.17.99.11 255.255.255.0
+	S1(config-if)# no shutdown
+	S1(config-if)# end
+	S1# copy running-config startup-config
+
+
+	-- SNELHEID POORTEN INSTELLEN: --
+	S1> enable
+	S1# configure terminal
+	S1(config)# interface FastEthernet 0/1
+	S1(config-if)# duplex full
+	S1(config-if)# speed 100
+	S1(config-if)# end
+	S1# copy running-config startup-config
+
+
+	-- AUTO-MDIX (Medium-Dependent Interface Crossover) (straight-through/crossover) INSTELLEN: --
+	S1> enable
+	S1# configure terminal
+	S1(config)# interface FastEthernet 0/1
+	S1(config-if)# duplex auto
+	S1(config-if)# speed auto
+	S1(config-if)# mdix auto
+	S1(config-if)# end
+	S1# copy running-config startup-config
+
+
+	-- SHUTDOWN UNUSED PORTS: --
+	S1# conf t
+	S1(Config)# interface range F0/1 - 4
+	S1(Config-if)# shutdown
+	S1(Config-if)# interface range F0/7 - 24
+	S1(Config-if)# shutdown
+	S1(Config-if)# interface range g0/1 - 2
+	S1(Config-if)# shutdown
+	S1(Config-if)# end
+
+
+	-- WINDOWS COMMANDS: --
+	ipconfig /all
+	netstat -r (route tabel)
+	route print (route tabel)
+	arp -a
+	ipconfig /flushdns
+	ipconfig /displaydns
+	nslookup (exit)
+	ping address -t (blijft pingen) (-4: IPV4 forceren)
+	netstat (open & running TCP connections on networked host)
+
+
+	-- MODE SWITCHING: --
+	enable							user exec -> priviledged exec
+	disable							priviledged exec -> user exec
+	configure terminal				priviledged exec -> global configuration
+	interface gigabitEthernet0/0	global configuration -> interface configuration
+	exit							één niveau terug in de hiërarchie:
+										interface configuration -> global configuration
+										global configuration -> priviledged exec
+										priviledged exec -> user exec
+	end								global of interface configuration -> priviledged exec (= ctrl+z)
+
+
+
+	-- MODES DEFINED: --
+	User Exec				Router> 				>-teken
+	Priviledged Exec		Router#					#-teken
+	Global configuration	Router(config)#			sleutelwoord config
+	Interface configuration	Router(config-if)#		sleutelwoord config-if
+
+
+	-- BOOT LOADER (Operating system missing?): --
+	1) Connect PC to serial port
+	2) Unplug & replug power, withing 15s: hold MODE while system LED is still flashing green
+	3) Keep pressing until system LED breefly turns amber & solid green, then release
+	4) switch: (dir flash, ...)
+
+
+	-- MISCELLANEOUS STUFF: --
+	-> Upload existing config (flat text): > (User exec)
+											paste code
+	-> Password recovery: ROMMON interface: startup-config negeren
+	-> Telnet sessie router/switch of console: Hyperterminal > transfer/capture text
+	-> [tab] 				(autocomplete commando)
+	-> [ctrl+C] 			(commando onderbreken  of uit config mode komen)
+	-> [ctrl+Z]				(van overal naar privileged exec)
+	-> [ctrl+shift+6, x?]		(lopend proces onderbreken vb: lange ping of tracert) (sessie tijdelijk verlaten (enter: terugkeren naar actieve ssh sessie bij lege CLI prompt))
+	-> Fouten bij het ingeven (3 soorten):	
+			# Ambiguous: meerdere commando’s mogelijk wanneer je een commando afkort vb: ‘show f’ zal niet werken want er zijn meerdere mogelijkheden die met een ‘f’ beginnen
+			# Incomplete: onvolledig commando vb: een ip adres instellen zonder mask
+			# Invalid: ongeldig commando
+
+
+
+	// ADD THIS SOMEWHERE ELSE:
+		ssh connectie switch <-> router?
