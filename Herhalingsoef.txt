@@ -148,6 +148,11 @@ switchport access vlan 66
 shutdown
 do show vlan br
 
+interface f0/24
+switchport mode trunk
+switchport trunk native vlan 99
+switchport trunk allowed vlan 10,20,30,40,99
+
 - Enable remote -
 interface vlan 40
 ip address 172.16.40.2 255.255.255.0
