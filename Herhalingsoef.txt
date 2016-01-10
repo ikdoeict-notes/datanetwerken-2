@@ -10,54 +10,54 @@ DEEL 1 ==================================================
 ** CONFIGUREER DE SERIELE INTERFACES VAN DE 3 ROUTERS **
 
 @LONDEN
-interface S0/0/0	
+interface S0/0/0
 ip address 10.192.16.2 255.255.255.252
 no shutdown
 
-interface s0/0/1	
+interface s0/0/1
 ip address 10.192.16.6 255.255.255.252
 no shutdown
 
-Brussel - Londen 
-ping 10.192.16.1 
+Brussel - Londen
+ping 10.192.16.1
 
-Parijs - Londen 
-ping 10.192.16.5 
+Parijs - Londen
+ping 10.192.16.5
 
 
 @BRUSSEL
-interface S0/0/0	
+interface S0/0/0
 ip address 10.192.16.1 255.255.255.252
 clock rate 4000000
 no shutdown
 
-interface S0/0/1	
+interface S0/0/1
 ip address 10.192.16.9 255.255.255.252
 clock rate 4000000
 no shutdown
 
-Brussel - Londen 
-ping 10.192.16.2 
+Brussel - Londen
+ping 10.192.16.2
 
-Brussel - Parijs 
-ping 10.192.16.10 
+Brussel - Parijs
+ping 10.192.16.10
 
 
 @PARIJS
-interface S0/0/0	
+interface S0/0/0
 ip address 10.192.16.5 255.255.255.252
 clock rate 4000000
 no shutdown
 
-interface S0/0/1	
+interface S0/0/1
 ip address 10.192.16.10 255.255.255.252
 no shutdown
 
 Parijs - Londen
-ping 10.192.16.6 
+ping 10.192.16.6
 
 Brussel - Parijs
-ping 10.192.16.9 
+ping 10.192.16.9
 
 
 =========================================================
@@ -81,9 +81,9 @@ name Black_hole
 do show vlan br
 
 ** ASSIGN VLANS TO PORTS **
-** CREATE TRUNKS **	
+** CREATE TRUNKS **
 
-@Access_1 
+@Access_1
 interface range f0/1-5
 switchport mode access
 switchport access vlan 10
@@ -129,7 +129,7 @@ switchport port-security maximum 10
 switchport port-security violation protect
 show port-security interface f0/15
 
-@Access_2 
+@Access_2
 interface range f0/1-5
 switchport mode access
 switchport access vlan 20
@@ -226,7 +226,7 @@ ip address 192.168.192.254 255.255.255.0
 no shutdown
 
 interface g0/0
-ip address 192.168.250.191 255.255.255.128
+ip address 192.168.250.254 255.255.255.128
 no shutdown
 
 
@@ -269,7 +269,7 @@ network 172.16.128.192
 passive-interface G0/1
 
 ip route 0.0.0.0 0.0.0.0 G0/0
-router rip 
+router rip
 default-information originate
 
 - TELNET PC7 - LONDEN -
