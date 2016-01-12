@@ -32,7 +32,7 @@
 	\textbf{Default gateway = dichtstbijzijnde router }(ook voor switch)\\
 	Meeste commando's schrijven elkaar over (bv ip address), tweede outhouden\\
 	\textbf{DNS-servers Odisee Gent: 10.132.1.5 \& 10.135.1.0}\\ \\
-	\textbf{"?" na commando} (bv.: "show ?", "smd prefer ?" "v?", "?") (bij output: \texttt{<cr>} = carriage return, "enter")\\ \\
+	\textbf{``?'' na commando} (bv.: ``show ?'', ``smd prefer ?'' ``v?'', ``?'') (bij output: \texttt{<cr>} = carriage return, ``enter'')\\ \\
 	\textbf{Router -- Router = cross-over}\\
 	\textbf{Switch -- Switch = cross-over}\\
 	\begin{itemize}[noitemsep,nolistsep]
@@ -149,7 +149,7 @@
 	\section{IPV6 instellen}
 	\begin{itemize}[noitemsep,nolistsep]
 		\item Global unicast address router = default gateway pc
-		\item When a global unicast address is set and it's status is up/up then the ipv6 prefix and prefix length are added to the routing table as a local route (/128 prefix , used by the router to efficiëntly process packets with the
+		\item When a global unicast address is set and it's status is up/up then the ipv6 prefix and prefix length are added to the routing table as a local route (/128 prefix , used by the router to effici\"ently process packets with the
 		interface address of the router as the destination)\\
 	\end{itemize}
 	\begin{lstlisting}
@@ -374,7 +374,7 @@
 		\item \textbf{Directly connected static route:} Only router exit interface
 		\item \textbf{Fully specified static route:} Next-hop IP address and exit interface\\
 	\end{itemize}
-	After the command we can put the "Administrative distance", used to create a floating static route (Administrative Distance higher than a dynamically learned route (AD = 90))\\
+	After the command we can put the ``Administrative distance'', used to create a floating static route (Administrative Distance higher than a dynamically learned route (AD = 90))\\
 	IPV4 routing aanzetten (default aan bij ipv4): \texttt{ip routing}\\
 	IPV6 routing aanzetten (default uit bij ipv6): \texttt{ipv6 unicast-routing}\\
 	\begin{lstlisting}
@@ -387,12 +387,12 @@
 	R1(config)# ip route 172.16.3.0 255.255.255.0 s0/0/0 172.16.2.1
 		(dest. ip & mask, exit interface & next hop ip address pair)
 	\end{lstlisting}
-	\ \\ \\ \\ \\
+	\newpage
 
 	\section{Routing Information Protocol}
 	\texttt{R1(config-router)\# ?} get the possible commands
 	\subsection{Advertising networks}
-	The "network" command:
+	The ``network'' command:
 	\begin{itemize}[noitemsep,nolistsep]
 		\item Enables RIP on all interfaces that belong to a specific network. Associated interfaces now both send and receive RIP updates.
 		\item Advertises the specified network in RIP routing updates sent to other routers every 30 seconds.\\
@@ -457,10 +457,10 @@
 	S1(config)# reload
 	\end{lstlisting}
 	SMD: Cisco Switch Database Manager, provides multiple templates\\
-	When the router doesn't support Dynamic Trunking Protocol: no "switchport mode dynamic auto/desirable"
+	When the router doesn't support Dynamic Trunking Protocol: no ``switchport mode dynamic auto/desirable''
 
 	\section{Network Address Translation}
-	Don't forget "\texttt{debug ip nat (+detailed)}"
+	Don't forget ``\texttt{debug ip nat (+detailed)}''
 	\subsection{Configure static NAT}
 	\begin{lstlisting}
 	R1(config)# ip nat inside source static <inside-local ip> <inside-global ip>
@@ -586,16 +586,16 @@
 	access-lists
 	\end{lstlisting}
 
-	\section{Filter "show" output}
+	\section{Filter ``show'' output}
 	\begin{itemize}[noitemsep,nolistsep]
-		\item Show command "pauses" after every 24 lines, press "enter" or "space" after "--more--"
+		\item Show command ``pauses'' after every 24 lines, press ``enter'' or ``space'' after ``--more-- ''
 		\item \texttt{terminal length <number>} to set number of lines (zero prevents pausing)\\
-		\item \textbf{Use pipe "|":}
+		\item \textbf{Use pipe `|':}
 		\begin{itemize}[noitemsep,nolistsep]
-			\item \textbf{section (bv.: "...line vty"):} shows entire section that starts with the filtering expression
-			\item \textbf{include (bv.: "...up"):} includes all output lines that match the filtering expression
-			\item \textbf{exclude (bv.: "...unassigned"):} excludes all output lines that match the filtering expression
-			\item \textbf{begin (bv.: "...gateway")} show all output lines from a certain point, starting with the line that matches the filtering expression\\
+			\item \textbf{section (bv.: ``...line vty''):} shows entire section that starts with the filtering expression
+			\item \textbf{include (bv.: ``...up''):} includes all output lines that match the filtering expression
+			\item \textbf{exclude (bv.: ``...unassigned''):} excludes all output lines that match the filtering expression
+			\item \textbf{begin (bv.: ``...gateway'')} show all output lines from a certain point, starting with the line that matches the filtering expression\\
 		\end{itemize}
 	\end{itemize}
 
@@ -622,7 +622,7 @@
 	\end{tabular} \\ \\
 
 	\begin{itemize}[noitemsep,nolistsep]
-		\item Upload exsisting config (flat text): paste code in "User exec"
+		\item Upload exsisting config (flat text): paste code in ``user exec''
 		\item Password recovery: ROMMON interface: startup-config negeren
 		\item Telnet sessie router/switch of console: Hyperterminal > transfer/capture text
 		\item Sessie tijdelijk verlaten: enter om terugkeren te keren naar actieve ssh sessie bij lege CLI prompt
@@ -633,7 +633,7 @@
 
 	Fouten bij het ingeven (3 soorten):
 	\begin{itemize}[noitemsep,nolistsep]
-		\item Ambiguous: meerdere commando’s mogelijk wanneer je een commando afkort vb: ‘show f’ zal niet werken want er zijn meerdere mogelijkheden die met een ‘f’ beginnen
+		\item Ambiguous: meerdere commando's mogelijk wanneer je een commando afkort vb: `show f' zal niet werken want er zijn meerdere mogelijkheden die met een `f' beginnen
 		\item Incomplete: onvolledig commando vb: een ip adres instellen zonder mask
 		\item Invalid: ongeldig commando\\
 	\end{itemize}
@@ -650,7 +650,7 @@
 		\hline \rule[-1ex]{0pt}{4ex} disable  & priviledged exec $\rightarrow$ user exec \\
 		\hline \rule[-1ex]{0pt}{4ex} configure terminal & priviledged exec $\rightarrow$ global configuration \\
 		\hline \rule[-1ex]{0pt}{4ex} interface g0/0 & global configuration $\rightarrow$ interface configuration \\
-		\hline \rule[-1ex]{0pt}{4ex} exit & \'{e}\'{e}n niveau terug in de hiërarchie\\
+		\hline \rule[-1ex]{0pt}{4ex} exit & \'{e}\'{e}n niveau terug in de hi\"erarchie\\
 		\hline \rule[-1ex]{0pt}{4ex} end & global/interface configuration $\rightarrow$ priviledged exec (= ctrl+z)  \\
 		\hline
 	\end{tabular} \\
@@ -659,8 +659,8 @@
 	\begin{tabular}{|c|c|c|}
 		\hline \rule[-1ex]{0pt}{4ex} User Exec & \texttt{Router>} & \texttt{>} -- teken \\
 		\hline \rule[-1ex]{0pt}{4ex} Priviledged Exec & \texttt{Router\#} & \texttt{\#} -- teken \\
-		\hline \rule[-1ex]{0pt}{4ex} Global configuration & \texttt{Router(config)\#} & sleutelwoord "config" \\
-		\hline \rule[-1ex]{0pt}{4ex} Interface configuration & \texttt{Router(config-if)\#} & sleutelwoord "config-if" \\
+		\hline \rule[-1ex]{0pt}{4ex} Global configuration & \texttt{Router(config)\#} & sleutelwoord ``config'' \\
+		\hline \rule[-1ex]{0pt}{4ex} Interface configuration & \texttt{Router(config-if)\#} & sleutelwoord ``config-if'' \\
 		\hline
 	\end{tabular} \\
 
