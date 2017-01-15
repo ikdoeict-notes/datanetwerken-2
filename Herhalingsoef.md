@@ -1,15 +1,20 @@
+# Herhalingsoefening
 
-show controllers s0/0/0 > toon clock rate
+Ruben Thys - 2016-01-10
 
-ip nat inside ook voor subinterfaces
+## Varia
 
-=========================================================
-DEEL 1 ==================================================
-=========================================================
+`show controllers s0/0/0` > toon clock rate
 
-** CONFIGUREER DE SERIELE INTERFACES VAN DE 3 ROUTERS **
+`ip nat inside` ook voor subinterfaces
+
+## DEEL 1
+
+### CONFIGUREER DE SERIELE INTERFACES VAN DE 3 ROUTERS
 
 @LONDEN
+
+```
 interface S0/0/0
 ip address 10.192.16.2 255.255.255.252
 no shutdown
@@ -18,14 +23,16 @@ interface s0/0/1
 ip address 10.192.16.6 255.255.255.252
 no shutdown
 
-Brussel - Londen
+! Brussel - Londen
 ping 10.192.16.1
 
-Parijs - Londen
+! Parijs - Londen
 ping 10.192.16.5
-
+```
 
 @BRUSSEL
+
+```
 interface S0/0/0
 ip address 10.192.16.1 255.255.255.252
 clock rate 4000000
@@ -36,14 +43,16 @@ ip address 10.192.16.9 255.255.255.252
 clock rate 4000000
 no shutdown
 
-Brussel - Londen
+! Brussel - Londen
 ping 10.192.16.2
 
-Brussel - Parijs
+! Brussel - Parijs
 ping 10.192.16.10
-
+```
 
 @PARIJS
+
+```
 interface S0/0/0
 ip address 10.192.16.5 255.255.255.252
 clock rate 4000000
@@ -53,19 +62,18 @@ interface S0/0/1
 ip address 10.192.16.10 255.255.255.252
 no shutdown
 
-Parijs - Londen
+! Parijs - Londen
 ping 10.192.16.6
 
-Brussel - Parijs
+! Brussel - Parijs
 ping 10.192.16.9
+```
 
+## DEEL 2
 
-=========================================================
-DEEL 2 ==================================================
-=========================================================
+### MAAK VLANS OP SWITCHES
 
-** MAAK VLANS OP SWITCHES **
-
+```
 enable
 conf t
 vlan 10
@@ -79,11 +87,14 @@ name Management
 vlan 66
 name Black_hole
 do show vlan br
+```
 
-** ASSIGN VLANS TO PORTS **
-** CREATE TRUNKS **
+### ASSIGN VLANS TO PORTS
+### CREATE TRUNKS
 
 @Access_1
+
+```
 interface range f0/1-5
 switchport mode access
 switchport access vlan 10
@@ -107,14 +118,14 @@ switchport mode trunk
 switchport trunk native vlan 99
 switchport trunk allowed vlan 10,20,30,40,99
 
-- Enable remote -
+! Enable remote
 interface vlan 40
 ip address 172.16.40.1 255.255.255.0
 no shutdown
 exit
 ip default-gateway 172.16.40.254
 
-- Secure -
+! Secure
 interface f0/5
 switchport mode access
 switchport port-security
@@ -128,8 +139,11 @@ switchport port-security
 switchport port-security maximum 10
 switchport port-security violation protect
 show port-security interface f0/15
+```
 
 @Access_2
+
+```
 interface range f0/1-5
 switchport mode access
 switchport access vlan 20
@@ -153,14 +167,17 @@ switchport mode trunk
 switchport trunk native vlan 99
 switchport trunk allowed vlan 10,20,30,40,99
 
-- Enable remote -
+! Enable remote
 interface vlan 40
 ip address 172.16.40.2 255.255.255.0
 no shutdown
 exit
 ip default-gateway 172.16.40.254
+```
 
 @@@@ Distribution
+
+```
 interface f0/23
 switchport mode trunk
 switchport trunk native vlan 99
@@ -177,14 +194,17 @@ interface g0/1
 switchport mode trunk
 no shutdown
 
-- Enable remote -
+! Enable remote
 interface vlan 40
 ip address 172.16.40.3 255.255.255.0
 no shutdown
 exit
 ip default-gateway 172.16.40.254
+```
 
 @LONDEN
+
+```
 interface g0/0
 
 interface g0/0.10
@@ -208,19 +228,21 @@ encapsulation dot1q 99 native
 exit
 interface g0/0
 no shutdown
+```
 
-
-
-=========================================================
-DEEL 3 ==================================================
-=========================================================
+## DEEL 3
 
 @BRUSSEL
+
+```
 interface g0/1
 ip address 172.16.128.206 255.255.255.240
 no shutdown
+```
 
 @PARIJS
+
+```
 interface g0/1
 ip address 192.168.192.254 255.255.255.0
 no shutdown
@@ -228,15 +250,19 @@ no shutdown
 interface g0/0
 ip address 192.168.250.254 255.255.255.128
 no shutdown
+```
 
+## RIP
 
-RIP =====================================================
-
+```
 show ip protocols
 show ip route
-version 2 >>> sends subnetmasks in routing updates
+version 2 !sends subnetmasks in routing updates
+```
 
 @PARIJS
+
+```
 router rip
 version 2
 network 10.192.16.4
@@ -245,8 +271,11 @@ network 192.168.250.128
 passive-interface g0/1
 network 192.168.192.0
 passive-interface g0/0
+```
 
 @LONDEN
+
+```
 router rip
 version 2
 network 10.192.16.4
@@ -259,8 +288,11 @@ network 172.16.30.0
 passive-interface G0/0.30
 network 172.16.40.0
 passive-interface G0/0.40
+```
 
 @BRUSSEL
+
+```
 router rip
 version 2
 network 10.192.16.0
@@ -272,15 +304,15 @@ ip route 0.0.0.0 0.0.0.0 G0/0
 router rip
 default-information originate
 
-- TELNET PC7 - LONDEN -
+! TELNET PC7 - LONDEN -
 telnet 172.16.40.254
+```
 
-
-=========================================================
-DEEL 4 ==================================================
-=========================================================
+## DEEL 4
 
 @BRUSSEL
+
+```
 interface g0/0
 ip address 138.147.157.33 255.255.255.224
 no shutdown
@@ -302,14 +334,15 @@ ip nat inside source list 1 pool dynamisch
 interface s0/0/0
 ip nat inside
 exit
+```
 
+## DEEL 4
 
-=========================================================
-DEEL 4 ==================================================
-=========================================================
 SLAAC = Auto config ipv6
 
 @BRUSSEL
+
+```
 ipv6 unicast-routing
 
 interface S0/0/1
@@ -321,12 +354,12 @@ interface G0/1
 ipv6 rip RIPNG enable
 ipv6 address 2001:db8:acad:b::1/64
 exit
+```
 
-=========================================================
-DEEL 5 ==================================================
-=========================================================
+## DEEL 5
 
 @PARIJS
+```
 ipv6 unicast-routing
 
 interface s0/0/1
@@ -337,32 +370,4 @@ exit
 interface G0/1
 ipv6 rip RIPNG enable
 ipv6 address 2001:db8:acad:c::1/64
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+```
